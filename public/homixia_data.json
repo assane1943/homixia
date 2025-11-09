@@ -1,0 +1,44 @@
+[
+  {
+    "id": "HX-CASA-001",
+    "nom": "Appartement Premium Anfa",
+    "ville": "Casablanca",
+    "adresse": "Résidence Anfa Park, Bd de la Corniche, Casablanca, Maroc",
+    "description": "Appartement moderne situé à Anfa, à 5 minutes du Morocco Mall et de la Corniche. Idéal pour vos séjours professionnels ou de détente, avec tout le confort nécessaire.",
+    "proprietaire": "Mme El Fassi",
+    "wifiNom": "Homixia_Anfa",
+    "wifiPass": "Casa2025!",
+    "keybox": "7462",
+    "equipements": "Climatisation réversible, Cuisine équipée, Smart TV avec Netflix, Machine à laver, Wi-Fi Fibre optique, Fer à repasser, Terrasse avec vue mer",
+    "regles": "Merci de ne pas fumer à l’intérieur. Respectez le voisinage après 22h. Ne laissez pas la climatisation allumée en votre absence.",
+    "image": "/bg-apartment.jpg"
+  },
+  {
+    "id": "HX-CASA-002",
+    "nom": "Appartement Cosy Maarif",
+    "ville": "Casablanca",
+    "adresse": "Rue Abderrahmane Sahraoui, Quartier Maarif, Casablanca",
+    "description": "Appartement cosy au cœur de Maarif, proche des commerces et restaurants. Idéal pour un séjour court ou long.",
+    "proprietaire": "M. Benhaddou",
+    "wifiNom": "Homixia_Maarif",
+    "wifiPass": "Maarif2025",
+    "keybox": "1598",
+    "equipements": "Wi-Fi rapide, TV, Machine à café, Cuisine moderne, Climatisation",
+    "regles": "Pas de fêtes. Merci de respecter le voisinage.",
+    "image": "/images/appartements/maarif.jpg"
+  },
+  {
+    "id": "HX-CASA-003",
+    "nom": "Appartement Luxe Racine",
+    "ville": "Casablanca",
+    "adresse": "Rue Jean Jaurès, Quartier Racine, Casablanca",
+    "description": "Appartement haut de gamme dans le quartier chic de Racine, proche des restaurants et galeries.",
+    "proprietaire": "Mme Nadia G.",
+    "wifiNom": "Homixia_Racine",
+    "wifiPass": "Racine2025",
+    "keybox": "4839",
+    "equipements": "Jacuzzi, Télé connectée, Cuisine équipée, Climatisation, Balcon panoramique",
+    "regles": "Ne pas fumer, pas d’animaux, respect du calme après 22h.",
+    "image": "/images/appartements/racine.jpg"
+  }
+]

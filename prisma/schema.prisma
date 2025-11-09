@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Equipe {
+  id        Int      @id @default(autoincrement())
+  nom       String
+  role      String
+  telephone String
+  createdAt DateTime @default(now())
+}
+
+model Appartement {
+  id           Int      @id @default(autoincrement())
+  code         String   @unique
+  nom          String
+  ville        String
+  proprietaire String
+  wifiNom      String?
+  wifiPass     String?
+  keybox       String?
+  description  String?
+  createdAt    DateTime @default(now())
+}
+
+model Service {
+  id        Int      @id @default(autoincrement())
+  nom       String
+  client    String
+  logement  String
+  prix      String
+  date      DateTime @default(now())
+}
+
+model Avis {
+  id          Int      @id @default(autoincrement())
+  nom         String
+  note        Int
+  commentaire String
+  date        DateTime @default(now())
+}

@@ -1,0 +1,60 @@
+{
+  "services": [
+    {
+      "nom": "Contacter le propriétaire",
+      "icone": "👤",
+      "prix": "Gratuit",
+      "delai": "Disponible 24h/24",
+      "telephone": "+212645678901",
+      "whatsapp": "https://wa.me/212645678901"
+    },
+    {
+      "nom": "Femme de ménage",
+      "icone": "🧹",
+      "prix": "À partir de 150 MAD / séance",
+      "delai": "Disponible tous les jours de 8h à 20h",
+      "telephone": "+212662334455",
+      "whatsapp": "https://wa.me/212662334455"
+    },
+    {
+      "nom": "Cuisinière",
+      "icone": "👩🏽‍🍳",
+      "prix": "À partir de 200 MAD / jour",
+      "delai": "Réservation 24h à l’avance",
+      "telephone": "+212667445566",
+      "whatsapp": "https://wa.me/212667445566"
+    },
+    {
+      "nom": "Location de voiture",
+      "icone": "🚗",
+      "prix": "À partir de 300 MAD / jour",
+      "delai": "Livraison sous 1h à Casablanca",
+      "telephone": "+212678998877",
+      "whatsapp": "https://wa.me/212678998877"
+    },
+    {
+      "nom": "Guide touristique",
+      "icone": "🗺️",
+      "prix": "À partir de 250 MAD / demi-journée",
+      "delai": "Réservation minimum 3h avant",
+      "telephone": "+212665778899",
+      "whatsapp": "https://wa.me/212665778899"
+    },
+    {
+      "nom": "Chauffeur privé",
+      "icone": "🚖",
+      "prix": "À partir de 400 MAD / jour",
+      "delai": "Disponible 24h/24",
+      "telephone": "+212666001122",
+      "whatsapp": "https://wa.me/212666001122"
+    },
+    {
+      "nom": "Médecin à domicile",
+      "icone": "🩺",
+      "prix": "À partir de 250 MAD / visite",
+      "delai": "Disponible 24h/24",
+      "telephone": "+212600112233",
+      "whatsapp": "https://wa.me/212600112233"
+    }
+  ]
+}

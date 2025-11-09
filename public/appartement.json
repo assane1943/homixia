@@ -1,0 +1,49 @@
+{
+  "id": "HX-CASA-001",
+  "nom": "Appartement Premium Anfa",
+  "ville": "Casablanca",
+  "pays": "Maroc",
+  "adresse": "Résidence Anfa Park, Bd de la Corniche, Casablanca, Maroc",
+  "lat": 33.5928,
+  "lng": -7.6323,
+  "description": "Appartement moderne situé à Anfa, à 5 minutes du Morocco Mall et de la Corniche. Idéal pour vos séjours professionnels ou de détente, avec tout le confort nécessaire.",
+  "wifi": {
+    "ssid": "Homixia_Anfa",
+    "password": "Casa2025!"
+  },
+  "keybox": {
+    "emplacement": "Boîte noire fixée au mur à droite de la porte d’entrée.",
+    "code": "7462"
+  },
+  "equipements": [
+    "Climatisation réversible",
+    "Cuisine équipée",
+    "Smart TV avec Netflix",
+    "Machine à laver",
+    "Wi-Fi Fibre optique",
+    "Fer et planche à repasser",
+    "Terrasse avec vue mer"
+  ],
+  "videos": [
+    {
+      "title": "Utiliser la Smart TV et Netflix",
+      "youtubeId": "VYOjWnS4cMY"
+    },
+    {
+      "title": "Ouvrir la boîte à clés facilement",
+      "youtubeId": "5NV6Rdv1a3I"
+    }
+  ],
+  "regles": [
+    "Merci de ne pas fumer à l’intérieur du logement.",
+    "Pas d’animaux domestiques.",
+    "Respectez le voisinage après 22h.",
+    "Ne laissez pas la climatisation allumée en votre absence."
+  ],
+  "proprietaire": {
+    "nom": "Mme El Fassi",
+    "telephone": "+212 6 45 67 89 01",
+    "email": "contact@homixia.ma"
+  },
+  "image": "/bg-apartment.jpg"
+}

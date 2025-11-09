@@ -1,0 +1,46 @@
+{
+  "ville": "Casablanca",
+  "pays": "Maroc",
+  "lieux": [
+    {
+      "categorie": "restaurant",
+      "nom": "Le Cabestan",
+      "type": "Restaurant de fruits de mer",
+      "adresse": "90 Bd de la Corniche, Casablanca",
+      "horaire": "12h00 - 00h00",
+      "lat": 33.6084,
+      "lng": -7.6464,
+      "image": "/images/ville/cabestan.jpg"
+    },
+    {
+      "categorie": "lieu",
+      "nom": "Mosquée Hassan II",
+      "type": "Monument religieux",
+      "description": "L'une des plus grandes mosquées au monde, célèbre pour son architecture impressionnante et sa vue sur l’océan.",
+      "horaire": "09h00 - 17h00",
+      "lat": 33.6073,
+      "lng": -7.6325,
+      "image": "/images/ville/hassan2.jpg"
+    },
+    {
+      "categorie": "lieu",
+      "nom": "La Corniche Ain Diab",
+      "type": "Plage & promenade",
+      "description": "Une belle promenade en bord de mer avec restaurants, cafés et clubs.",
+      "horaire": "Ouvert 24h/24",
+      "lat": 33.5902,
+      "lng": -7.6823,
+      "image": "/images/ville/corniche.jpg"
+    },
+    {
+      "categorie": "lieu",
+      "nom": "Morocco Mall",
+      "type": "Centre commercial",
+      "description": "Le plus grand centre commercial d’Afrique, avec des boutiques, restaurants et un aquarium géant.",
+      "horaire": "10h00 - 22h00",
+      "lat": 33.5823,
+      "lng": -7.6875,
+      "image": "/images/ville/moroccomall.jpg"
+    }
+  ]
+}

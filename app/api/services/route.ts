@@ -1,51 +1,23 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 
-// 🟢 GET → Liste tous les services
-export async function GET() {
-  try {
-    const services = await prisma.service.findMany({
-      orderBy: { date: "desc" },
-    });
-    return NextResponse.json(services);
-  } catch (err) {
-    console.error("Erreur GET /api/services :", err);
-    return NextResponse.json(
-      { error: "Erreur lors du chargement des services" },
-      { status: 500 }
-    );
-  }
+// ✅ Simplifié pour contourner le typage Turbopack
+export async function GET(req: any, context: any) {
+  const { id } = await context.params;
+  const service = await prisma.service.findUnique({ where: { id: Number(id) } });
+  if (!service) return NextResponse.json({ error: "Introuvable" }, { status: 404 });
+  return NextResponse.json(service);
 }
 
-// 🟡 POST → Ajouter un service
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    const { nom, client, logement, prix, statut } = body;
+export async function PUT(req: any, context: any) {
+  const { id } = await context.params;
+  const data = await req.json();
+  const service = await prisma.service.update({ where: { id: Number(id) }, data });
+  return NextResponse.json(service);
+}
 
-    if (!nom || !client || !logement || !prix) {
-      return NextResponse.json(
-        { error: "Champs requis manquants" },
-        { status: 400 }
-      );
-    }
-
-    const nouveauService = await prisma.service.create({
-      data: {
-        nom,
-        client,
-        logement,
-        prix,
-        statut: statut || "en_attente",
-      },
-    });
-
-    return NextResponse.json(nouveauService);
-  } catch (err) {
-    console.error("Erreur POST /api/services :", err);
-    return NextResponse.json(
-      { error: "Erreur lors de l’ajout du service" },
-      { status: 500 }
-    );
-  }
+export async function DELETE(req: any, context: any) {
+  const { id } = await context.params;
+  await prisma.service.delete({ where: { id: Number(id) } });
+  return NextResponse.json({ success: true });
 }

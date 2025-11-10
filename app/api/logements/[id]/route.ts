@@ -1,65 +1,49 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
-// 🟢 GET → Récupérer un logement précis
+// GET /api/logements/[id]
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
+
     const logement = await prisma.appartement.findUnique({
-      where: { id: Number(params.id) },
+      where: { id: Number(id) },
     });
 
     if (!logement) {
-      return NextResponse.json({ error: "Logement introuvable" }, { status: 404 });
+      return NextResponse.json({ error: "Logement introuvable ❌" }, { status: 404 });
     }
 
     return NextResponse.json(logement);
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
-  }
-}
-
-// 🟡 PUT → Modifier un logement
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const data = await req.json();
-
-    const logement = await prisma.appartement.update({
-      where: { id: Number(params.id) },
-      data,
-    });
-
-    return NextResponse.json(logement);
-  } catch (err) {
-    console.error(err);
+    console.error("Erreur GET /api/logements/[id]", err);
     return NextResponse.json(
-      { error: "Erreur lors de la mise à jour du logement" },
+      { error: "Erreur interne du serveur ⚠️" },
       { status: 500 }
     );
   }
 }
 
-// 🔴 DELETE → Supprimer un logement
+// DELETE /api/logements/[id]
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
+
     await prisma.appartement.delete({
-      where: { id: Number(params.id) },
+      where: { id: Number(id) },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, message: "Logement supprimé ✅" });
   } catch (err) {
-    console.error(err);
+    console.error("Erreur DELETE /api/logements/[id]", err);
     return NextResponse.json(
-      { error: "Erreur lors de la suppression du logement" },
+      { error: "Erreur interne du serveur ⚠️" },
       { status: 500 }
     );
   }

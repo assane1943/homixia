@@ -6,25 +6,41 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:admin": "tsx prisma/seedAdmin.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
+    "aws-sdk": "^2.1692.0",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.8.0",
+    "formidable-serverless": "^1.1.1",
+    "json2csv": "^6.0.0-alpha.2",
     "next": "16.0.1",
+    "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "react-dropzone": "^14.3.8"
+    "react-dropzone": "^14.3.8",
+    "react-qr-code": "^2.0.18"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^20.19.24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "prisma": "^6.19.0",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5"
-  }
+  },
+  "scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "seed": "tsx prisma/seed.ts"
+}
+
 }

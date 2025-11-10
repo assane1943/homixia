@@ -3,44 +3,111 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Equipe {
-  id        Int      @id @default(autoincrement())
-  nom       String
-  role      String
-  telephone String
-  createdAt DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  nom        String
+  role       String
+  telephone  String?
+  email      String?  @unique
+  motDePasse String?
+  createdAt  DateTime @default(now())
 }
 
 model Appartement {
-  id           Int      @id @default(autoincrement())
-  code         String   @unique
-  nom          String
-  ville        String
-  proprietaire String
-  wifiNom      String?
-  wifiPass     String?
-  keybox       String?
-  description  String?
-  createdAt    DateTime @default(now())
+  id                 Int       @id @default(autoincrement())
+  code               String    @unique
+  nom                String
+  ville              String
+  pays               String
+  adresse            String
+  proprietaire       String
+  description        String?
+  lat                Float?
+  lng                Float?
+  wifiSsid           String?
+  wifiPassword       String?
+  keyboxCode         String?
+  keyboxPlace        String?
+  imagePrincipale    String?
+  imagesSecondaires  String?
+  videosExplicatives String?
+  createdAt          DateTime  @default(now())
+  avis               Avis[]
+  services           Service[]
 }
 
 model Service {
-  id        Int      @id @default(autoincrement())
-  nom       String
-  client    String
-  logement  String
-  prix      String
-  date      DateTime @default(now())
+  id            Int          @id @default(autoincrement())
+  nom           String
+  client        String
+  logement      String
+  prix          String
+  statut        String       @default("en_attente")
+  date          DateTime     @default(now())
+  appartementId Int?
+  appartement   Appartement? @relation(fields: [appartementId], references: [id])
 }
 
 model Avis {
+  id            Int          @id @default(autoincrement())
+  appartementId Int?
+  nom           String
+  note          Int
+  commentaire   String
+  date          DateTime     @default(now())
+  appartement   Appartement? @relation(fields: [appartementId], references: [id])
+}
+
+model LocalContent {
+  id        Int      @id @default(autoincrement())
+  ville     String
+  categorie String
+  nom       String
+  type      String
+  adresse   String?
+  horaire   String?
+  lat       Float?
+  lng       Float?
+  image     String?
+  createdAt DateTime @default(now())
+}
+
+model Subscription {
+  id           Int       @id @default(autoincrement())
+  proprietaire String
+  pack         String
+  statut       String
+  debut        DateTime?
+  fin          DateTime?
+  factures     Json?
+  createdAt    DateTime  @default(now())
+}
+
+model Local {
   id          Int      @id @default(autoincrement())
   nom         String
-  note        Int
-  commentaire String
-  date        DateTime @default(now())
+  type        String
+  adresse     String?
+  telephone   String?
+  description String?
+  createdAt   DateTime @default(now())
+}
+
+model Abonnement {
+  id             Int      @id @default(autoincrement())
+  pack           String
+  statut         String
+  renouvellement DateTime
+  facturesPayees Int      @default(0)
+  createdAt      DateTime @default(now())
+}
+
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
 }

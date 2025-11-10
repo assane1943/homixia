@@ -1,77 +1,67 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+
+const menu = [
+  { name: "Dashboard", path: "/admin", icon: "📊" },
+  { name: "Propriétés", path: "/admin/logements", icon: "🏠" },
+  { name: "Services", path: "/admin/services", icon: "🧼" },
+  { name: "Avis", path: "/admin/avis", icon: "💬" },
+  { name: "Paramètres", path: "/admin/parametres", icon: "⚙️" }, // ✅ corrigé ici
+];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const links = [
-    { name: "Équipe", path: "/admin/equipe", emoji: "👥" },
-    { name: "Logements", path: "/admin/logements", emoji: "🏠" },
-    { name: "Services", path: "/admin/services", emoji: "🧾" },
-    { name: "Avis", path: "/admin/avis", emoji: "⭐" },
-  ];
 
   return (
-    <main className="min-h-screen flex flex-col md:flex-row bg-gray-50">
-      {/* SIDEBAR */}
-      <aside className="md:w-64 w-full bg-amber-400 text-black flex flex-col p-4 md:h-screen shadow-md relative">
-        <div className="flex items-center justify-between md:justify-center mb-4">
-          <div className="flex items-center gap-2">
+    <div className="flex min-h-screen bg-gray-50 font-sans">
+      {/* 🧭 Sidebar */}
+      <aside className="w-64 bg-white border-r border-gray-200 p-5 flex flex-col justify-between">
+        <div>
+          <div className="flex items-center gap-3 mb-6">
             <Image
               src="/logo-homixia.png"
               alt="Homixia"
               width={40}
               height={40}
-              className="rounded-full bg-white p-1"
+              className="rounded-full"
             />
-            <h1 className="text-lg font-bold">Homixia Admin</h1>
+            <h1 className="text-lg font-bold text-amber-600">Homixia Admin</h1>
           </div>
 
-          {/* BOUTON MENU MOBILE */}
-          <button
-            className="md:hidden text-2xl font-bold"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            ☰
-          </button>
+          <nav className="space-y-2">
+            {menu.map((item) => (
+              <Link
+                key={item.path}
+                href={item.path}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${
+                  pathname === item.path
+                    ? "bg-amber-100 text-amber-700"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                <span>{item.icon}</span> {item.name}
+              </Link>
+            ))}
+          </nav>
         </div>
 
-        {/* NAVIGATION */}
-        <nav
-          className={`flex flex-col gap-2 mt-4 ${
-            menuOpen ? "block" : "hidden md:flex"
-          }`}
+        {/* 🚪 Bouton déconnexion */}
+        <button
+          onClick={() => {
+            localStorage.removeItem("homixia_admin");
+            window.location.href = "/login";
+          }}
+          className="bg-red-100 text-red-600 text-sm px-3 py-2 rounded-lg font-semibold hover:bg-red-200"
         >
-          {links.map((link) => (
-            <Link
-              key={link.path}
-              href={link.path}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                pathname === link.path
-                  ? "bg-black/20 text-black"
-                  : "hover:bg-black/10"
-              }`}
-            >
-              <span>{link.emoji}</span>
-              {link.name}
-            </Link>
-          ))}
-        </nav>
-
-        <footer className="mt-auto text-xs text-center text-black/70">
-          © {new Date().getFullYear()} Homixia
-        </footer>
+          🚪 Déconnexion
+        </button>
       </aside>
 
-      {/* CONTENU PRINCIPAL */}
-      <section className="flex-1 p-4 overflow-y-auto">
-        {children}
-      </section>
-    </main>
+      {/* 🧱 Contenu principal */}
+      <main className="flex-1 p-6">{children}</main>
+    </div>
   );
 }

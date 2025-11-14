@@ -6,8 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "seed:admin": "tsx prisma/seedAdmin.ts"
+    "seed": "tsx prisma/seed.ts",
+    "create-admin": "tsx scripts/createAdmin.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
@@ -22,7 +22,9 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-dropzone": "^14.3.8",
-    "react-qr-code": "^2.0.18"
+    "react-qr-code": "^2.0.18",
+    "react-signature-canvas": "^1.1.0-alpha.2",
+    "recharts": "^3.4.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -35,12 +37,5 @@
     "tailwindcss": "^4",
     "tsx": "^4.20.6",
     "typescript": "^5"
-  },
-  "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "seed": "tsx prisma/seed.ts"
-}
-
+  }
 }

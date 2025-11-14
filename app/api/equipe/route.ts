@@ -1,40 +1,54 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
-// 🔹 GET — liste des membres
+// 🔹 Lister toute l'équipe
 export async function GET() {
   try {
-    const membres = await prisma.equipe.findMany({
+    const equipe = await prisma.equipe.findMany({
       orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json(membres);
+
+    return NextResponse.json(equipe);
   } catch (err) {
     console.error("Erreur GET équipe:", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
 
-// 🔹 POST — ajout d’un membre
+// 🔹 Ajouter un membre
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const membre = await prisma.equipe.create({ data: body });
-    return NextResponse.json(membre);
+
+    // Vérifier email unique
+    const exists = await prisma.equipe.findUnique({
+      where: { email: body.email },
+    });
+
+    if (exists) {
+      return NextResponse.json(
+        { error: "Cet email existe déjà" },
+        { status: 400 }
+      );
+    }
+
+    // Hash du mot de passe
+    const hash = await bcrypt.hash(body.motDePasse, 10);
+
+    const member = await prisma.equipe.create({
+      data: {
+        nom: body.nom,
+        email: body.email,
+        role: body.role || "admin",
+        telephone: body.telephone || null,
+        motDePasse: hash,
+      },
+    });
+
+    return NextResponse.json(member);
   } catch (err) {
     console.error("Erreur POST équipe:", err);
-    return NextResponse.json({ error: "Erreur d’ajout membre" }, { status: 500 });
-  }
-}
-
-// 🔹 DELETE — suppression d’un membre
-export async function DELETE(req: Request) {
-  try {
-    const { id } = await req.json();
-    await prisma.equipe.delete({ where: { id } });
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error("Erreur DELETE équipe:", err);
-    return NextResponse.json({ error: "Erreur suppression" }, { status: 500 });
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

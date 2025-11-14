@@ -1,33 +1,32 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-import { randomUUID } from "crypto";
-
-export const runtime = "nodejs"; // Permet d'utiliser fs
 
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
-    const file = formData.get("file") as File | null;
+    const file = formData.get("file") as File;
 
     if (!file) {
       return NextResponse.json({ error: "Aucun fichier reçu" }, { status: 400 });
     }
 
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const fileName = `${randomUUID()}-${file.name.replace(/\s/g, "_")}`;
-    const filePath = path.join(uploadDir, fileName);
+    const uploadUrl = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD}/image/upload`;
 
-    fs.writeFileSync(filePath, buffer);
+    const cloudForm = new FormData();
+    cloudForm.append("file", new Blob([buffer]));
+    cloudForm.append("upload_preset", process.env.CLOUDINARY_PRESET!);
 
-    const fileUrl = `/uploads/${fileName}`;
-    return NextResponse.json({ url: fileUrl });
+    const uploadRes = await fetch(uploadUrl, {
+      method: "POST",
+      body: cloudForm,
+    });
+
+    const data = await uploadRes.json();
+
+    return NextResponse.json({ url: data.secure_url });
   } catch (error) {
-    console.error("Erreur upload :", error);
-    return NextResponse.json({ error: "Erreur lors de l’upload" }, { status: 500 });
+    console.error("Erreur upload:", error);
+    return NextResponse.json({ error: "Erreur upload" }, { status: 500 });
   }
 }

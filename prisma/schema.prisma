@@ -111,3 +111,15 @@ model playing_with_neon {
   name  String
   value Float? @db.Real
 }
+
+
+model CheckIn {
+  id            String   @id @default(cuid())
+  nom           String
+  accepted      Boolean
+  signature     String
+  passportUrl   String?
+  createdAt     DateTime @default(now())
+}
+
+

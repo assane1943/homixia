@@ -2,173 +2,140 @@
 
 import { useEffect, useState } from "react";
 
-interface Avis {
-  id: number;
-  nom: string;
-  note: number;
-  commentaire: string;
-  date: string;
-}
-
 export default function AvisAdmin() {
-  const [avis, setAvis] = useState<Avis[]>([]);
+  const [avis, setAvis] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [noteFiltre, setNoteFiltre] = useState<number | null>(null);
-  const [newAvis, setNewAvis] = useState({
-    nom: "",
-    note: "",
-    commentaire: "",
-  });
-  const [message, setMessage] = useState("");
+  const [editing, setEditing] = useState<any | null>(null);
 
-  // 🔹 Charger les avis
-  useEffect(() => {
-    const url = noteFiltre ? `/api/avis?note=${noteFiltre}` : "/api/avis";
-    fetch(url)
+  const loadAvis = () => {
+    fetch("/api/avis")
       .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) setAvis(data);
-        else setAvis([]);
-      })
-      .catch((err) => {
-        console.error(err);
-        setAvis([]);
-      })
+      .then(setAvis)
       .finally(() => setLoading(false));
-  }, [noteFiltre]);
-
-  // 🔹 Ajouter un avis
-  const handleAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("/api/avis", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nom: newAvis.nom,
-          note: parseInt(newAvis.note),
-          commentaire: newAvis.commentaire,
-        }),
-      });
-      if (!res.ok) throw new Error("Erreur ajout");
-      const data = await res.json();
-      setAvis((prev) => [data, ...prev]);
-      setNewAvis({ nom: "", note: "", commentaire: "" });
-      setMessage("✅ Avis ajouté avec succès !");
-    } catch {
-      setMessage("❌ Erreur lors de l’ajout de l’avis");
-    }
   };
 
-  const moyenne =
-    avis.length > 0
-      ? (avis.reduce((a, b) => a + b.note, 0) / avis.length).toFixed(1)
-      : "0.0";
+  useEffect(() => {
+    loadAvis();
+  }, []);
+
+  const deleteAvis = async (id: number) => {
+    if (!confirm("Supprimer cet avis ?")) return;
+    await fetch(`/api/avis/${id}`, { method: "DELETE" });
+    loadAvis();
+  };
+
+  const saveEdit = async () => {
+    await fetch(`/api/avis/${editing.id}`, {
+      method: "PUT",
+      body: JSON.stringify(editing),
+    });
+    setEditing(null);
+    loadAvis();
+  };
+
+  if (loading)
+    return (
+      <main className="min-h-screen flex items-center justify-center text-amber-600">
+        Chargement des avis...
+      </main>
+    );
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-amber-600">💬 Gestion des Avis</h1>
+    <main className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold text-amber-700">⭐ Gestion des avis</h1>
 
-      {message && (
-        <div className="bg-green-100 border border-green-200 text-green-700 p-2 rounded-lg text-sm">
-          {message}
-        </div>
-      )}
+      <div className="space-y-4">
+        {avis.map((a) => (
+          <div
+            key={a.id}
+            className="bg-white p-4 rounded-xl shadow border border-amber-100"
+          >
+            <div className="flex justify-between">
+              <h2 className="font-semibold">{a.nom}</h2>
+              <span className="text-amber-600 font-bold">{a.note}/5</span>
+            </div>
 
-      {/* FILTRES */}
-      <div className="flex items-center gap-3">
-        <select
-          value={noteFiltre || ""}
-          onChange={(e) =>
-            setNoteFiltre(e.target.value ? parseInt(e.target.value) : null)
-          }
-          className="border border-gray-300 rounded-lg p-2 text-sm"
-        >
-          <option value="">Toutes les notes</option>
-          {[5, 4, 3, 2, 1].map((n) => (
-            <option key={n} value={n}>
-              {n} ⭐
-            </option>
-          ))}
-        </select>
-        <p className="text-sm text-gray-600">
-          Note moyenne : <b className="text-amber-600">{moyenne}</b> ⭐
-        </p>
+            <p className="text-sm text-gray-700 mt-2">{a.commentaire}</p>
+
+            <p className="text-xs text-gray-400 mt-1">
+              Appartement : {a.appartement?.nom || "—"}
+            </p>
+
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => setEditing(a)}
+                className="px-3 py-1 text-xs bg-blue-600 text-white rounded-lg"
+              >
+                Modifier
+              </button>
+
+              <button
+                onClick={() => deleteAvis(a.id)}
+                className="px-3 py-1 text-xs bg-red-600 text-white rounded-lg"
+              >
+                Supprimer
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* FORMULAIRE AJOUT */}
-      <form
-        onSubmit={handleAdd}
-        className="bg-white rounded-2xl shadow p-4 border border-amber-100 space-y-3"
-      >
-        <h2 className="font-semibold text-amber-600 text-sm">
-          ➕ Ajouter un avis manuellement
-        </h2>
+      {/* ————— MODAL MODIFICATION ————— */}
+      {editing && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
+            <h2 className="font-bold text-lg text-amber-700">
+              Modifier l'avis
+            </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <input
-            type="text"
-            placeholder="Nom du client"
-            value={newAvis.nom}
-            onChange={(e) => setNewAvis({ ...newAvis, nom: e.target.value })}
-            required
-            className="border border-gray-200 rounded-lg p-2 text-sm text-black"
-          />
-          <input
-            type="number"
-            placeholder="Note (1 à 5)"
-            value={newAvis.note}
-            onChange={(e) => setNewAvis({ ...newAvis, note: e.target.value })}
-            required
-            className="border border-gray-200 rounded-lg p-2 text-sm text-black"
-          />
-        </div>
+            <input
+              className="w-full border p-2 rounded mt-3"
+              value={editing.nom}
+              onChange={(e) =>
+                setEditing({ ...editing, nom: e.target.value })
+              }
+            />
 
-        <textarea
-          placeholder="Commentaire"
-          value={newAvis.commentaire}
-          onChange={(e) =>
-            setNewAvis({ ...newAvis, commentaire: e.target.value })
-          }
-          required
-          className="border border-gray-200 rounded-lg p-2 text-sm text-black w-full min-h-[80px]"
-        />
+            <input
+              type="number"
+              min="1"
+              max="5"
+              className="w-full border p-2 rounded mt-3"
+              value={editing.note}
+              onChange={(e) =>
+                setEditing({ ...editing, note: Number(e.target.value) })
+              }
+            />
 
-        <button
-          type="submit"
-          className="w-full bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-lg text-sm font-semibold transition"
-        >
-          Ajouter l’avis
-        </button>
-      </form>
+            <textarea
+              className="w-full border p-2 rounded mt-3"
+              value={editing.commentaire}
+              onChange={(e) =>
+                setEditing({
+                  ...editing,
+                  commentaire: e.target.value,
+                })
+              }
+            />
 
-      {/* LISTE DES AVIS */}
-      {loading ? (
-        <p className="text-center text-gray-500">Chargement des avis...</p>
-      ) : avis.length === 0 ? (
-        <p className="text-center text-gray-400 italic">
-          Aucun avis enregistré.
-        </p>
-      ) : (
-        <div className="grid gap-4">
-          {avis.map((a) => (
-            <div
-              key={a.id}
-              className="bg-white p-4 rounded-2xl shadow border border-gray-100"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-800">
-                  {a.nom} — <span className="text-amber-600">{a.note} ⭐</span>
-                </h3>
-                <p className="text-xs text-gray-500">
-                  {new Date(a.date).toLocaleDateString("fr-FR")}
-                </p>
-              </div>
-              <p className="text-gray-700 text-sm mt-2">{a.commentaire}</p>
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={() => setEditing(null)}
+                className="px-3 py-1 bg-gray-300 rounded"
+              >
+                Annuler
+              </button>
+
+              <button
+                onClick={saveEdit}
+                className="px-3 py-1 bg-amber-600 text-white rounded"
+              >
+                Enregistrer
+              </button>
             </div>
-          ))}
+          </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }

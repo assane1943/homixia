@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-const APPARTEMENT_TEST_CODE = "HX-CASA-001";
+const CODE_APPARTEMENT = "HX-CASA-001";
 
 export async function GET() {
   try {
     const appartement = await prisma.appartement.findUnique({
-      where: { code: APPARTEMENT_TEST_CODE },
+      where: { code: CODE_APPARTEMENT },
       include: {
         avis: true,
         services: true,
@@ -15,67 +15,47 @@ export async function GET() {
 
     if (!appartement) {
       return NextResponse.json(
-        { error: "Appartement Anfa introuvable" },
+        { error: "Appartement introuvable" },
         { status: 404 }
       );
     }
 
-    // 🔹 Calcul des indicateurs
+    // ⭐ Note moyenne
     const noteMoyenne =
       appartement.avis.length > 0
-        ? appartement.avis.reduce((acc, a) => acc + a.note, 0) /
-          appartement.avis.length
-        : 0;
+        ? (
+            appartement.avis.reduce((acc, a) => acc + a.note, 0) /
+            appartement.avis.length
+          ).toFixed(1)
+        : "0.0";
 
+    // 📦 Services
     const totalServices = appartement.services.length;
+
     const actifs = appartement.services.filter(
       (s) => s.statut === "planifié"
     ).length;
+
     const aVenir = appartement.services.filter(
       (s) => s.statut === "en_attente"
     ).length;
 
-    // 🔹 Notifications dynamiques
-    const notifications = [];
+    // 🔔 Notifications
+    const notifications = appartement.services.map((s) => ({
+      id: s.id,
+      message:
+        s.statut === "terminé"
+          ? `🎉 Service "${s.nom}" terminé`
+          : s.statut === "planifié"
+          ? `🟢 Service "${s.nom}" en cours`
+          : `🕒 Service "${s.nom}" à venir`,
+      type: s.statut === "terminé" ? "success" : "info",
+    }));
 
-    // Services à venir
-    appartement.services
-      .filter((s) => s.statut === "en_attente")
-      .forEach((s) =>
-        notifications.push({
-          id: s.id,
-          message: `🕒 Service "${s.nom}" prévu pour ${s.client}`,
-          type: "service",
-        })
-      );
-
-    // Services planifiés
-    appartement.services
-      .filter((s) => s.statut === "planifié")
-      .forEach((s) =>
-        notifications.push({
-          id: s.id,
-          message: `✅ Service "${s.nom}" actuellement en cours`,
-          type: "service",
-        })
-      );
-
-    // Services terminés
-    appartement.services
-      .filter((s) => s.statut === "terminé")
-      .forEach((s) =>
-        notifications.push({
-          id: s.id,
-          message: `🎉 Service "${s.nom}" terminé avec succès`,
-          type: "success",
-        })
-      );
-
-    // Si aucun service → message de veille
     if (notifications.length === 0) {
       notifications.push({
         id: 0,
-        message: "Aucune notification pour le moment 😴",
+        message: "Aucun service enregistré pour l'instant.",
         type: "info",
       });
     }
@@ -83,7 +63,7 @@ export async function GET() {
     return NextResponse.json({
       nom: appartement.nom,
       ville: appartement.ville,
-      noteMoyenne: noteMoyenne.toFixed(1),
+      noteMoyenne,
       totalServices,
       actifs,
       aVenir,

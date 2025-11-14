@@ -1,25 +1,25 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// 🟢 PUT → Modifier un service
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const data = await req.json();
-    const updated = await prisma.service.update({
+    const body = await req.json();
+
+    const service = await prisma.service.update({
       where: { id: Number(params.id) },
-      data,
+      data: { statut: body.statut },
     });
-    return NextResponse.json(updated);
+
+    return NextResponse.json(service);
   } catch (err) {
-    console.error("Erreur PUT /api/services/[id] :", err);
-    return NextResponse.json(
-      { error: "Erreur lors de la mise à jour du service" },
-      { status: 500 }
-    );
+    console.error("Erreur UPDATE service:", err);
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
 
-// 🔴 DELETE → Supprimer un service
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
@@ -28,12 +28,10 @@ export async function DELETE(
     await prisma.service.delete({
       where: { id: Number(params.id) },
     });
+
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Erreur DELETE /api/services/[id] :", err);
-    return NextResponse.json(
-      { error: "Erreur lors de la suppression du service" },
-      { status: 500 }
-    );
+    console.error("Erreur DELETE service:", err);
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

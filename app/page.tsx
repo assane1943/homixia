@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   // 🔹 Gestion du nom du client dynamique
   const [name, setName] = useState<string | null>(null);
 
@@ -34,9 +37,18 @@ export default function Home() {
       {/* 🌑 Filtre sombre + flou */}
       <div className="absolute inset-0 bg-black/45 backdrop-blur-sm -z-10"></div>
 
+      {/* 🔥 BULLE CHECK-IN BAS DROITE (au-dessus de Aya) */}
+      <button
+        aria-label="Check-in"
+        onClick={() => router.push("/check-in")}
+        className="fixed bottom-24 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full bg-[#F28C00] text-white shadow-2xl ring-4 ring-white/20 hover:scale-105 transition"
+      >
+        ✓
+      </button>
+
       {/* 📱 Contenu principal */}
       <div className="min-h-screen flex flex-col items-center justify-start px-5 pt-12 pb-20 text-center text-white">
-        {/* Logo avec effet de respiration */}
+        {/* Logo */}
         <div className="mb-6">
           <img
             src="/logo-homixia.png"
@@ -94,7 +106,7 @@ export default function Home() {
         💬
       </button>
 
-      {/* ✨ Animations globales */}
+      {/* ✨ Animations */}
       <style jsx global>{`
         @keyframes fade-in {
           from {
@@ -104,6 +116,15 @@ export default function Home() {
           to {
             opacity: 1;
             transform: translateY(0);
+          }
+        }
+
+        @keyframes fade-in-delay {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
           }
         }
 
@@ -135,7 +156,7 @@ export default function Home() {
         }
 
         .animate-fade-in-delay {
-          animation: fade-in 1.2s ease-out forwards;
+          animation: fade-in-delay 1.2s ease-out forwards;
         }
 
         .animate-slide-up {

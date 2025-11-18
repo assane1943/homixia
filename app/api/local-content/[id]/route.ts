@@ -1,27 +1,24 @@
-// app/api/avis/[id]/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function DELETE(
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await context.params;
-    const avisId = Number(id);
+    const id = Number(params.id);
 
-    if (!avisId || isNaN(avisId)) {
+    if (!id) {
       return NextResponse.json({ error: "ID invalide" }, { status: 400 });
     }
 
-    await prisma.avis.update({
-      where: { id: avisId },
-      data: { visible: false },
+    await prisma.localContent.delete({
+      where: { id },
     });
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Erreur DELETE /avis/[id]:", err);
+    console.error("Erreur DELETE local-content:", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

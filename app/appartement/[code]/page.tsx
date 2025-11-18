@@ -1,0 +1,228 @@
+// app/appartement/[code]/page.tsx
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+
+interface Appartement {
+  code: string;
+  nom: string;
+  ville: string;
+  pays: string;
+  imagePrincipale?: string | null;
+}
+
+export default function AppartementHome() {
+  const router = useRouter();
+  console.log("🔍 PARAMS =", useParams());
+  const params = useParams() as { code?: string };
+  const code = params?.code as string | undefined;
+
+  const [apt, setApt] = useState<Appartement | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // 🔹 Nom du client (comme ton ancien Home)
+  const [name, setName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const qName = params.get("name");
+    if (qName) {
+      setName(qName);
+      localStorage.setItem("homixia_guest_name", qName);
+    } else {
+      const stored = localStorage.getItem("homixia_guest_name");
+      if (stored) setName(stored);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!code) return;
+    setLoading(true);
+    fetch(`/api/appartement/${code}`)
+      .then((r) => r.json())
+      .then((d) =>
+        setApt({
+          code: d.code,
+          nom: d.nom,
+          ville: d.ville,
+          pays: d.pays,
+          imagePrincipale: d.imagePrincipale,
+        })
+      )
+      .catch((e) => console.error("Erreur appartement:", e))
+      .finally(() => setLoading(false));
+  }, [code]);
+
+  if (!code) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p>Code appartement manquant dans l’URL.</p>
+      </main>
+    );
+  }
+
+  if (loading || !apt) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p>Chargement de votre appartement...</p>
+      </main>
+    );
+  }
+
+  const welcomeTitle = name ? `👋 Bienvenue ${name} !` : "👋 Bienvenue !";
+  const welcomeSub = name
+    ? `Nous sommes heureux de vous accueillir dans ${apt.nom}.`
+    : `Nous sommes heureux de vous accueillir dans ${apt.nom}.`;
+
+  return (
+    <main className="min-h-screen relative overflow-hidden font-sans">
+      {/* 🖼️ Image de fond */}
+      <div
+        className="fixed inset-0 -z-10 bg-cover bg-center"
+        style={{
+          backgroundImage: `url('${
+            apt.imagePrincipale || "/bg-apartment.jpg"
+          }')`,
+        }}
+      ></div>
+
+      {/* 🌑 Filtre sombre + flou */}
+      <div className="absolute inset-0 bg-black/45 backdrop-blur-sm -z-10"></div>
+
+      {/* 🔥 BULLE CHECK-IN BAS DROITE */}
+      <button
+        aria-label="Check-in"
+        onClick={() => router.push(`/appartement/${code}/check-in`)}
+        className="fixed bottom-24 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full bg-[#F28C00] text-white shadow-2xl ring-4 ring-white/20 hover:scale-105 transition"
+      >
+        ✓
+      </button>
+
+      {/* 📱 Contenu principal */}
+      <div className="min-h-screen flex flex-col items-center justify-start px-5 pt-12 pb-20 text-center text-white">
+        {/* Logo */}
+        <div className="mb-6">
+          <img
+            src="/logo-homixia.png"
+            alt="Homixia"
+            className="h-24 sm:h-28 mx-auto drop-shadow-lg animate-pulse-slow"
+          />
+        </div>
+
+        {/* Message de bienvenue */}
+        <h1 className="text-2xl sm:text-3xl font-extrabold mb-1 drop-shadow-md animate-fade-in">
+          {welcomeTitle}
+        </h1>
+        <p className="text-sm sm:text-base mb-1 max-w-lg drop-shadow-sm">
+          Vous séjournez à {apt.ville}, {apt.pays}.
+        </p>
+        <p className="text-sm sm:text-base mb-8 max-w-lg drop-shadow-sm animate-fade-in-delay">
+          {welcomeSub}
+        </p>
+
+        {/* Boutons */}
+        <div className="w-full max-w-md space-y-4 animate-slide-up">
+          <button
+            onClick={() => router.push(`/appartement/${code}/details`)}
+            className="w-full bg-gradient-to-b from-[#F4A000] to-[#F28C00] text-black font-semibold py-4 rounded-full shadow-xl ring-2 ring-white/20 hover:brightness-110 transition"
+          >
+            🏡 Découvrir l’appartement
+          </button>
+
+          <button
+            onClick={() => router.push(`/appartement/${code}/ville`)}
+            className="w-full bg-gradient-to-b from-[#F4A000] to-[#F28C00] text-black font-semibold py-4 rounded-full shadow-xl ring-2 ring-white/20 hover:brightness-110 transition"
+          >
+            🌍 Explorer la ville
+          </button>
+
+          <button
+            onClick={() => router.push(`/appartement/${code}/services`)}
+            className="w-full bg-gradient-to-b from-[#F4A000] to-[#F28C00] text-black font-semibold py-4 rounded-full shadow-xl ring-2 ring-white/20 hover:brightness-110 transition"
+          >
+            🧰 Services à la demande
+          </button>
+
+          <button
+            onClick={() => router.push(`/appartement/${code}/avis`)}
+            className="w-full bg-white/90 text-[#002B5C] font-semibold py-4 rounded-full shadow-md border border-white/30 hover:scale-105 transition"
+          >
+            ⭐ Avis des clients
+          </button>
+        </div>
+      </div>
+
+      {/* 💬 Bulle Aya */}
+      <button
+        aria-label="Ouvrir Aya"
+        className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full bg-[#F28C00] text-white shadow-2xl ring-4 ring-white/20 hover:scale-105 transition"
+        onClick={() => alert("Aya arrive bientôt 💬")}
+      >
+        💬
+      </button>
+
+      {/* ✨ Animations */}
+      <style jsx global>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fade-in-delay {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes slide-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes pulse-slow {
+          0%,
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.05);
+            opacity: 0.95;
+          }
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.8s ease-out forwards;
+        }
+
+        .animate-fade-in-delay {
+          animation: fade-in-delay 1.2s ease-out forwards;
+        }
+
+        .animate-slide-up {
+          animation: slide-up 1.5s ease-out forwards;
+        }
+
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite;
+        }
+      `}</style>
+    </main>
+  );
+}

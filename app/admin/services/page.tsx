@@ -2,110 +2,197 @@
 
 import { useEffect, useState } from "react";
 
-export default function ServicesAdmin() {
-  const [services, setServices] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+interface Service {
+  id: number;
+  nom: string;
+  whatsappMessage?: string | null;
+  appartement?: { id: number; nom: string; code: string } | null;
+  appartementId?: number | null;
+  date: string;
+}
 
-  const fetchServices = () => {
-    fetch("/api/services")
-      .then((res) => res.json())
-      .then(setServices)
-      .finally(() => setLoading(false));
-  };
+interface AppartementOption {
+  id: number;
+  nom: string;
+  code: string;
+}
 
+export default function AdminServicesPage() {
+  const [list, setList] = useState<Service[]>([]);
+  const [apparts, setApparts] = useState<AppartementOption[]>([]);
+
+  const [form, setForm] = useState({
+    nom: "",
+    whatsappMessage: "",
+    appartementId: "",
+  });
+
+  const [msg, setMsg] = useState<string | null>(null);
+
+  // 🔹 Charger services + appartements
   useEffect(() => {
-    fetchServices();
+    fetch("/api/services")
+      .then((r) => r.json())
+      .then((d) => Array.isArray(d) ? setList(d) : setList([]))
+      .catch(console.error);
+
+    fetch("/api/appartements")
+      .then((r) => r.json())
+      .then((d) =>
+        setApparts(
+          d.map((a: any) => ({
+            id: a.id,
+            nom: a.nom,
+            code: a.code,
+          }))
+        )
+      );
   }, []);
 
-  if (loading)
-    return (
-      <main className="min-h-screen flex items-center justify-center text-amber-600">
-        Chargement des services...
-      </main>
-    );
+  // 🔹 Ajouter un service
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMsg(null);
 
-  async function updateStatut(id: number, statut: string) {
-    await fetch(`/api/services/${id}`, {
-      method: "PUT",
-      body: JSON.stringify({ statut }),
+    const res = await fetch("/api/services", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
     });
-    fetchServices();
-  }
 
-  async function deleteService(id: number) {
+    const data = await res.json();
+
+    if (!res.ok) {
+      setMsg(data.error || "Erreur");
+    } else {
+      setList((prev) => [data, ...prev]);
+      setForm({ nom: "", whatsappMessage: "", appartementId: "" });
+      setMsg("Service ajouté ✅");
+    }
+  };
+
+  // 🔹 Supprimer
+  const handleDelete = async (id: number) => {
     if (!confirm("Supprimer ce service ?")) return;
-    await fetch(`/api/services/${id}`, {
-      method: "DELETE",
-    });
-    fetchServices();
-  }
+
+    await fetch(`/api/services/${id}`, { method: "DELETE" });
+
+    setList((prev) => prev.filter((s) => s.id !== id));
+  };
+
+  // 🔹 Ouvrir WhatsApp
+  const handleWhatsApp = (service: Service) => {
+    const number = "+212665247695";
+
+    const text =
+      service.whatsappMessage ||
+      `Bonjour 👋, je souhaiterais réserver ou avoir plus d'informations concernant le service : ${service.nom}.`;
+
+    window.open(
+      `https://wa.me/${number}?text=${encodeURIComponent(text)}`,
+      "_blank"
+    );
+  };
 
   return (
-    <main className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-amber-700 mb-4">
-        🧰 Gestion des services
-      </h1>
+    <div className="space-y-5 text-black">
+      <h2 className="text-lg font-semibold text-amber-700">
+        Services à la demande 🧰
+      </h2>
 
-      <section className="space-y-4">
-        {services.map((s) => (
-          <div
-            key={s.id}
-            className="bg-white shadow p-4 rounded-xl border border-amber-100"
-          >
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="font-semibold text-lg text-gray-800">{s.nom}</h2>
-              <span
-                className={`text-xs px-3 py-1 rounded-full ${
-                  s.statut === "terminé"
-                    ? "bg-green-100 text-green-700"
-                    : s.statut === "planifié"
-                    ? "bg-blue-100 text-blue-700"
-                    : "bg-yellow-100 text-yellow-700"
-                }`}
-              >
-                {s.statut}
-              </span>
+      {msg && (
+        <div className="text-sm bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg">
+          {msg}
+        </div>
+      )}
+
+      {/* FORMULAIRE */}
+      <form
+        onSubmit={handleCreate}
+        className="bg-white rounded-2xl shadow p-4 border border-amber-100 space-y-3"
+      >
+        <h3 className="text-sm font-semibold text-amber-600">
+          ➕ Ajouter un service
+        </h3>
+
+        <input
+          className="border rounded-lg px-2 py-1 text-sm w-full"
+          placeholder="Nom du service (ex: Femme de ménage)"
+          value={form.nom}
+          onChange={(e) => setForm((f) => ({ ...f, nom: e.target.value }))}
+          required
+        />
+
+        {/* Message WhatsApp */}
+        <textarea
+          className="border rounded-lg px-2 py-1 text-sm w-full"
+          placeholder="Message WhatsApp personnalisé (optionnel)"
+          value={form.whatsappMessage}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, whatsappMessage: e.target.value }))
+          }
+        />
+
+        {/* APPARTEMENT */}
+        <select
+          className="border rounded-lg px-2 py-1 text-sm w-full"
+          value={form.appartementId}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, appartementId: e.target.value }))
+          }
+        >
+          <option value="">— Choisir un appartement —</option>
+          {apparts.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.nom} ({a.code})
+            </option>
+          ))}
+        </select>
+
+        <button className="w-full bg-amber-500 text-white rounded-lg py-2 text-sm font-semibold">
+          Ajouter
+        </button>
+      </form>
+
+      {/* LISTE */}
+      <div className="space-y-3">
+        {list.length === 0 ? (
+          <p className="text-sm text-gray-600">Aucun service enregistré.</p>
+        ) : (
+          list.map((s) => (
+            <div
+              key={s.id}
+              className="bg-white rounded-2xl shadow p-3 border border-gray-100 text-sm flex justify-between items-center"
+            >
+              <div>
+                <p className="font-semibold">{s.nom}</p>
+
+                <p className="text-xs text-gray-700">
+                  {s.appartement
+                    ? `${s.appartement.nom} — (${s.appartement.code})`
+                    : "Aucun appartement lié"}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <button
+                  onClick={() => handleWhatsApp(s)}
+                  className="text-xs px-3 py-2 bg-amber-500 text-white rounded-full mr-2"
+                >
+                  Contacter
+                </button>
+
+                <button
+                  className="text-xs text-red-500"
+                  onClick={() => handleDelete(s.id)}
+                >
+                  Supprimer
+                </button>
+              </div>
             </div>
-
-            <p className="text-sm text-gray-600">
-              👤 Client : <span className="font-medium">{s.client}</span>
-            </p>
-            <p className="text-sm text-gray-600">
-              🏡 Appartement :{" "}
-              <span className="font-medium">{s.appartement?.nom}</span> (
-              {s.appartement?.ville})
-            </p>
-            <p className="text-sm text-gray-600">💰 Prix : {s.prix}</p>
-            <p className="text-xs text-gray-400 mt-2">
-              📅 {new Date(s.date).toLocaleString("fr-FR")}
-            </p>
-
-            {/* Boutons */}
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={() => updateStatut(s.id, "planifié")}
-                className="px-3 py-1 text-xs bg-blue-500 text-white rounded-lg"
-              >
-                Planifié
-              </button>
-
-              <button
-                onClick={() => updateStatut(s.id, "terminé")}
-                className="px-3 py-1 text-xs bg-green-600 text-white rounded-lg"
-              >
-                Terminé
-              </button>
-
-              <button
-                onClick={() => deleteService(s.id)}
-                className="px-3 py-1 text-xs bg-red-500 text-white rounded-lg"
-              >
-                Supprimer
-              </button>
-            </div>
-          </div>
-        ))}
-      </section>
-    </main>
+          ))
+        )}
+      </div>
+    </div>
   );
 }

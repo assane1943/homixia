@@ -1,37 +1,39 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const body = await req.json();
-
-    const service = await prisma.service.update({
-      where: { id: Number(params.id) },
-      data: { statut: body.statut },
-    });
-
-    return NextResponse.json(service);
-  } catch (err) {
-    console.error("Erreur UPDATE service:", err);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
-  }
-}
-
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params; // ⚡ FIX NEXT 16
+    const serviceId = Number(id);
+
+    if (!serviceId || isNaN(serviceId)) {
+      return NextResponse.json(
+        { error: "ID invalide" },
+        { status: 400 }
+      );
+    }
+
+    const exists = await prisma.service.findUnique({
+      where: { id: serviceId },
+    });
+
+    if (!exists) {
+      return NextResponse.json(
+        { error: "Service introuvable" },
+        { status: 404 }
+      );
+    }
+
     await prisma.service.delete({
-      where: { id: Number(params.id) },
+      where: { id: serviceId },
     });
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Erreur DELETE service:", err);
+    console.error("Erreur DELETE /services/[id]:", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

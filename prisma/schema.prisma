@@ -18,63 +18,101 @@ model Equipe {
 }
 
 model Appartement {
-  id                 Int       @id @default(autoincrement())
-  code               String    @unique
-  nom                String
-  ville              String
-  pays               String
-  adresse            String
-  proprietaire       String
-  description        String?
-  lat                Float?
-  lng                Float?
-  wifiSsid           String?
-  wifiPassword       String?
-  keyboxCode         String?
-  keyboxPlace        String?
-  imagePrincipale    String?
-  imagesSecondaires  String?
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  nom         String
+  ville       String
+  pays        String
+  adresse     String
+  description String?
+  lat         Float?
+  lng         Float?
+
+  wifiSsid     String?
+  wifiPassword String?
+
+  keyboxPlace String?
+  keyboxCode  String?
+
+  equipements        String?
   videosExplicatives String?
-  createdAt          DateTime  @default(now())
-  avis               Avis[]
-  services           Service[]
+  regles             String?
+
+  proprietaireNom   String?
+  proprietaireTel   String?
+  proprietaireEmail String?
+
+  imagePrincipale   String?
+  imagesSecondaires String?
+
+  contratUrl String?
+
+  createdAt DateTime @default(now())
+
+  avis         Avis[]
+  services     Service[]
+  reservations Reservation[]
+
+  // relation via code pour Check-In
+  checkinsByCode CheckIn[] @relation("AppartByCode")
+}
+
+model CheckIn {
+  id          String   @id @default(cuid())
+  nom         String
+  accepted    Boolean
+  signature   String
+  passportUrl String?
+  createdAt   DateTime @default(now())
+
+  appartement     Appartement? @relation("AppartByCode", fields: [appartementCode], references: [code])
+  appartementCode String?
 }
 
 model Service {
-  id            Int          @id @default(autoincrement())
-  nom           String
-  client        String
-  logement      String
-  prix          String
-  statut        String       @default("en_attente")
-  date          DateTime     @default(now())
+  id              Int      @id @default(autoincrement())
+  nom             String
+  whatsappMessage String?
+  statut          String   @default("en_attente")
+  date            DateTime @default(now())
+
   appartementId Int?
   appartement   Appartement? @relation(fields: [appartementId], references: [id])
 }
 
+
+
+
+
+
 model Avis {
-  id            Int          @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   appartementId Int?
   nom           String
   note          Int
   commentaire   String
-  date          DateTime     @default(now())
-  appartement   Appartement? @relation(fields: [appartementId], references: [id])
+  date          DateTime @default(now())
+  visible       Boolean  @default(true)
+
+  appartement Appartement? @relation(fields: [appartementId], references: [id])
 }
 
-model LocalContent {
-  id        Int      @id @default(autoincrement())
+model localContent {
+  id        Int     @id @default(autoincrement())
   ville     String
   categorie String
   nom       String
-  type      String
   adresse   String?
-  horaire   String?
   lat       Float?
   lng       Float?
+  type      String?
+  horaire   String?
   image     String?
-  createdAt DateTime @default(now())
 }
+
+
+
+
 
 model Subscription {
   id           Int       @id @default(autoincrement())
@@ -112,14 +150,16 @@ model playing_with_neon {
   value Float? @db.Real
 }
 
+model Reservation {
+  id          Int      @id @default(autoincrement())
+  clientNom   String
+  clientEmail String?
+  clientTel   String?
+  debut       DateTime
+  fin         DateTime
+  statut      String   @default("confirmée")
+  createdAt   DateTime @default(now())
 
-model CheckIn {
-  id            String   @id @default(cuid())
-  nom           String
-  accepted      Boolean
-  signature     String
-  passportUrl   String?
-  createdAt     DateTime @default(now())
+  appartementId Int
+  appartement   Appartement @relation(fields: [appartementId], references: [id])
 }
-
-

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -26,21 +27,25 @@ export default function AdminLoginPage() {
 
     if (!res.ok) {
       setMessage(data.error || "Erreur de connexion ⚠️");
-    } else {
-      setMessage("✅ Connexion réussie !");
-
-      // Stockage des vraies infos
-      localStorage.setItem(
-        "homixia_admin",
-        JSON.stringify({
-          nom: data.nom,
-          email: data.email,
-        })
-      );
-
-      // Redirection
-      setTimeout(() => router.push("/admin"), 500);
+      setLoading(false);
+      return;
     }
+
+    setMessage("✅ Connexion réussie !");
+
+    // 🔥 STOCKAGE EN COOKIE POUR LE MIDDLEWARE
+    Cookies.set(
+      "homixia_admin",
+      JSON.stringify({ nom: data.nom, email: data.email }),
+      {
+        expires: 7,
+        sameSite: "strict",
+        secure: true,
+      }
+    );
+
+    // Redirection
+    setTimeout(() => router.push("/admin"), 500);
 
     setLoading(false);
   };

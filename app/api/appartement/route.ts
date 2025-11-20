@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+// force rebuild vercel
 
 // GET /api/appartement  → liste complète
 export async function GET() {

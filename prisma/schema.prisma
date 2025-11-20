@@ -12,10 +12,11 @@ model Equipe {
   nom        String
   role       String
   telephone  String?
-  email      String?  @unique
-  motDePasse String?
+  email      String   @unique
+  motDePasse String
   createdAt  DateTime @default(now())
 }
+
 
 model Appartement {
   id          Int     @id @default(autoincrement())

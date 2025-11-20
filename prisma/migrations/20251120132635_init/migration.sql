@@ -19,29 +19,45 @@ CREATE TABLE "Appartement" (
     "ville" TEXT NOT NULL,
     "pays" TEXT NOT NULL,
     "adresse" TEXT NOT NULL,
-    "proprietaire" TEXT NOT NULL,
     "description" TEXT,
     "lat" DOUBLE PRECISION,
     "lng" DOUBLE PRECISION,
     "wifiSsid" TEXT,
     "wifiPassword" TEXT,
-    "keyboxCode" TEXT,
     "keyboxPlace" TEXT,
+    "keyboxCode" TEXT,
+    "equipements" TEXT,
+    "videosExplicatives" TEXT,
+    "regles" TEXT,
+    "proprietaireNom" TEXT,
+    "proprietaireTel" TEXT,
+    "proprietaireEmail" TEXT,
     "imagePrincipale" TEXT,
     "imagesSecondaires" TEXT,
-    "videosExplicatives" TEXT,
+    "contratUrl" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Appartement_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
+CREATE TABLE "CheckIn" (
+    "id" TEXT NOT NULL,
+    "nom" TEXT NOT NULL,
+    "accepted" BOOLEAN NOT NULL,
+    "signature" TEXT NOT NULL,
+    "passportUrl" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "appartementCode" TEXT,
+
+    CONSTRAINT "CheckIn_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Service" (
     "id" SERIAL NOT NULL,
     "nom" TEXT NOT NULL,
-    "client" TEXT NOT NULL,
-    "logement" TEXT NOT NULL,
-    "prix" TEXT NOT NULL,
+    "whatsappMessage" TEXT,
     "statut" TEXT NOT NULL DEFAULT 'en_attente',
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "appartementId" INTEGER,
@@ -57,25 +73,25 @@ CREATE TABLE "Avis" (
     "note" INTEGER NOT NULL,
     "commentaire" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "visible" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "Avis_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "LocalContent" (
+CREATE TABLE "localContent" (
     "id" SERIAL NOT NULL,
     "ville" TEXT NOT NULL,
     "categorie" TEXT NOT NULL,
     "nom" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
     "adresse" TEXT,
-    "horaire" TEXT,
     "lat" DOUBLE PRECISION,
     "lng" DOUBLE PRECISION,
+    "type" TEXT,
+    "horaire" TEXT,
     "image" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "LocalContent_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "localContent_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -117,6 +133,30 @@ CREATE TABLE "Abonnement" (
     CONSTRAINT "Abonnement_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "playing_with_neon" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "value" REAL,
+
+    CONSTRAINT "playing_with_neon_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Reservation" (
+    "id" SERIAL NOT NULL,
+    "clientNom" TEXT NOT NULL,
+    "clientEmail" TEXT,
+    "clientTel" TEXT,
+    "debut" TIMESTAMP(3) NOT NULL,
+    "fin" TIMESTAMP(3) NOT NULL,
+    "statut" TEXT NOT NULL DEFAULT 'confirmée',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "appartementId" INTEGER NOT NULL,
+
+    CONSTRAINT "Reservation_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Equipe_email_key" ON "Equipe"("email");
 
@@ -124,7 +164,13 @@ CREATE UNIQUE INDEX "Equipe_email_key" ON "Equipe"("email");
 CREATE UNIQUE INDEX "Appartement_code_key" ON "Appartement"("code");
 
 -- AddForeignKey
+ALTER TABLE "CheckIn" ADD CONSTRAINT "CheckIn_appartementCode_fkey" FOREIGN KEY ("appartementCode") REFERENCES "Appartement"("code") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Service" ADD CONSTRAINT "Service_appartementId_fkey" FOREIGN KEY ("appartementId") REFERENCES "Appartement"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Avis" ADD CONSTRAINT "Avis_appartementId_fkey" FOREIGN KEY ("appartementId") REFERENCES "Appartement"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Reservation" ADD CONSTRAINT "Reservation_appartementId_fkey" FOREIGN KEY ("appartementId") REFERENCES "Appartement"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

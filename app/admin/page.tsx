@@ -15,10 +15,7 @@ export default function AdminDashboardPage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    // ⛔ Empêche le dashboard de charger si pas connecté
-    const admin = localStorage.getItem("homixia_admin");
-    if (!admin) return;
-
+    // 🚀 Dashboard chargé immédiatement, plus de blocage
     setReady(true);
 
     fetch("/api/dashboard")

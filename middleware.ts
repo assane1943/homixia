@@ -4,26 +4,33 @@ import type { NextRequest } from "next/server";
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // L’admin-login doit rester accessible
+  // ❌ Ne jamais toucher les API
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+
+  // 🎯 Admin login reste accessible
   if (pathname.startsWith("/admin/login")) {
     return NextResponse.next();
   }
 
-  // Vérifie le cookie admin
-  const cookie = req.cookies.get("homixia_admin");
+  // 🔐 Vérifie le cookie admin pour /admin
+  if (pathname.startsWith("/admin")) {
+    const cookie = req.cookies.get("homixia_admin");
 
-  // Pas de cookie → redirection vers login
-  if (!cookie) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/admin/login";
-    return NextResponse.redirect(url);
+    if (!cookie) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/admin/login";
+      return NextResponse.redirect(url);
+    }
   }
 
-  // Cookie ok → continuer
   return NextResponse.next();
 }
 
-// On protège tout le /admin sauf /admin/login
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    "/admin/:path*",   // protéger pages admin
+    "/api/:path*",     // ⚠️ matcher nécessaire mais on le laisse passer dans le code
+  ],
 };

@@ -24,3 +24,72 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.font-serif {
+  font-family: 'Playfair Display', serif !important;
+}
+ /* globals.css */
+
+/* Fonts variables are provided via layout.tsx using next/font; we use variables */
+:root{
+  --color-blue: #002f6d;   /* principal */
+  --color-orange: #ff9202; /* accent */
+  --color-dark: #0b2038;
+  --bg-soft: #fbfdff;
+  --accent-dark: #002f6d; /* used for contact section background (text will be white) */
+}
+
+/* Reset (minimal) */
+* { box-sizing: border-box; }
+html,body,#root { height:100%; }
+body { margin:0; background: #ffffff; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; scroll-behavior: smooth; color: var(--color-blue); }
+
+/* Font helpers (next/font sets variables) */
+.font-serif { font-family: var(--font-playfair), serif; }
+.font-sans { font-family: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+
+/* Title style */
+h1, h2, h3 { color: var(--color-blue); }
+h1, .font-serif { font-family: var(--font-playfair), serif; }
+
+/* Nav link style */
+.nav-link { color: var(--color-blue); text-decoration: none; }
+.nav-link:hover { color: var(--color-orange); }
+
+/* Buttons */
+.btn-primary {
+  display:inline-block;
+  background: var(--color-orange);
+  color: #071422;
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(255,146,2,0.12);
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s;
+}
+.btn-primary:hover { transform: translateY(-3px); opacity: 0.98; box-shadow: 0 10px 30px rgba(255,146,2,0.12); }
+
+/* Ghost button (outlined / link) */
+.btn-ghost {
+  background: transparent;
+  color: var(--color-blue);
+  padding: 0.5rem 0.35rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: underline;
+}
+.btn-ghost-inverted {
+  background: transparent;
+  color: white;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+/* Utility */
+.rounded-3xl { border-radius: 24px; }
+
+/* small responsive tweaks if you don't already have Tailwind set up use these */
+@media (max-width: 768px) {
+  h1 { font-size: 1.8rem !important; }
+}

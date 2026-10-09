@@ -1,363 +1,100 @@
-// app/page.tsx
-"use client";
-
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-
-/* --- LOGEMENTS --- */
-const apartments = [
-  {
-    title: "Appartement Premium Anfa",
-    location: "Casablanca — Anfa",
-    image: "/appartement-premium-anfa.jpg",
-  },
-  {
-    title: "Appartement Marina View",
-    location: "Casablanca — Marina",
-    image: "/appartement-marina.jpg",
-  },
-  {
-    title: "Appartement Palmier Moderne",
-    location: "Casablanca — Palmier",
-    image: "/appartement-palmier.jpg",
-  },
+const services = [
+  { icon: '✦', title: 'Gestion locative', text: 'Une prise en charge complète de votre location courte durée, de l’annonce aux voyageurs.' },
+  { icon: '✦', title: 'Ménage professionnel', text: 'Des équipes de confiance, un logement impeccable et des passages parfaitement synchronisés.' },
+  { icon: '✦', title: 'Navette aéroport', text: 'Des transferts sereins entre Casablanca et l’aéroport Mohammed V, à toute heure.' },
+  { icon: '✦', title: 'Guide voyageur', text: 'Un accueil digital élégant pour aider chaque voyageur à profiter pleinement de son séjour.' },
 ];
 
 export default function HomePage() {
-  const [scrolled, setScrolled] = useState(false);
-  const [openMenu, setOpenMenu] = useState(false);
-
-  const whatsappText = encodeURIComponent(
-    "Bonjour, je souhaite plus d'informations concernant vos services Homixia."
-  );
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <main className="w-full bg-white text-[#002f6d]">
+    <main>
+      <header className="nav">
+        <a className="brand" href="/" aria-label="Homixia, accueil">HOMIXIA<span>.</span></a>
+        <nav aria-label="Navigation principale">
+          <a href="#services">Services</a>
+          <a href="#apropos">Notre approche</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <a className="navCta" href="#contact">Parlons de votre bien</a>
+      </header>
 
-      {/* HEADER */}
-      <motion.header
-        initial={false}
-        animate={{
-          backdropFilter: scrolled ? "saturate(1) blur(6px)" : "none",
-          boxShadow: scrolled ? "0 6px 20px rgba(2,15,40,0.06)" : "none",
-        }}
-        transition={{ duration: 0.35 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white/95"
-      >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
-
-          {/* Logo */}
-          <Image src="/logo-homixia.png" alt="Homixia" width={130} height={70} className="object-contain" />
-
-          {/* Desktop Menu */}
-          <nav className="hidden md:flex items-center gap-8 text-lg font-medium">
-            <a href="#services" className="nav-link">Services</a>
-            <a href="#logements" className="nav-link">Logements</a>
-            <a href="#contact" className="nav-link">Contact</a>
-
-            <a
-              href={`https://wa.me/212665247695?text=${whatsappText}`}
-              className="btn-primary ml-4"
-            >
-              Contactez-nous
-            </a>
-          </nav>
-
-          {/* Mobile Burger */}
-          <button
-            onClick={() => setOpenMenu(!openMenu)}
-            className="md:hidden p-2 rounded-md"
-          >
-            <svg width="26" height="26" viewBox="0 0 24 24">
-              <path d="M3 6h18M3 12h18M3 18h18" stroke="#002f6d" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {openMenu && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden bg-white border-t"
-            >
-              <div className="px-6 py-6 space-y-4">
-                <a href="#services" className="nav-link" onClick={() => setOpenMenu(false)}>Services</a>
-                <a href="#logements" className="nav-link" onClick={() => setOpenMenu(false)}>Logements</a>
-                <a href="#contact" className="nav-link" onClick={() => setOpenMenu(false)}>Contact</a>
-
-                <a
-                  href={`https://wa.me/212665247695?text=${whatsappText}`}
-                  className="btn-primary block w-full text-center"
-                >
-                  Contactez-nous
-                </a>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.header>
-
-      {/* HERO */}
-      <section className="max-w-7xl mx-auto px-6 pt-40 pb-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-
-        {/* LEFT */}
-        <div>
-          <span className="inline-block bg-[#f5f7fb] px-3 py-1 rounded-full text-sm text-[#002f6d]">
-            📍 Basé au Maroc
-          </span>
-
-          <h1 className="mt-6 text-4xl md:text-5xl font-serif font-extrabold leading-tight text-[#002f6d]">
-            Profitez de votre temps,<br />
-            <span className="text-[#ff9202]">on s'occupe de vos voyageurs</span>
-          </h1>
-
-          <p className="mt-4 text-lg text-[#123] opacity-80 max-w-lg">
-            Homixia crée une expérience unique pour vos voyageurs tout en maximisant les revenus de vos logements.
-          </p>
-
-          {/* Avatars */}
-          <div className="flex items-center gap-4 mt-6">
-            <div className="flex -space-x-3">
-              <Image src="/avatar1.jpg" width={44} height={44} className="rounded-full border-2 border-white shadow" alt="" />
-              <Image src="/avatar2.jpg" width={44} height={44} className="rounded-full border-2 border-white shadow" alt="" />
-              <Image src="/avatar3.jpg" width={44} height={44} className="rounded-full border-2 border-white shadow" alt="" />
-            </div>
-            <p className="text-sm font-semibold">⭐ 4,92 sur Airbnb</p>
+      <section className="hero">
+        <div className="heroCopy">
+          <p className="eyebrow">CONCIERGERIE À CASABLANCA</p>
+          <h1>L’hospitalité,<br /><em>réinventée.</em></h1>
+          <p className="lead">Homixia imagine des séjours fluides et mémorables, tout en simplifiant la gestion de vos biens.</p>
+          <div className="actions">
+            <a className="primary" href="#services">Découvrir nos services <span>→</span></a>
+            <a className="secondary" href="https://wa.me/212665247695?text=Bonjour%20Homixia%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20vos%20services." target="_blank" rel="noreferrer">Nous écrire sur WhatsApp</a>
           </div>
-
-          {/* CTA */}
-          <div className="mt-8 flex gap-4">
-            <a href="#services" className="btn-ghost">Découvrir notre conciergerie →</a>
-            <a href={`https://wa.me/212665247695?text=${whatsappText}`} className="btn-primary">
-              Réserver / Contact
-            </a>
-          </div>
+          <div className="trust"><strong>Casablanca & littoral atlantique</strong><span>•</span><span>Service premium, humain et disponible</span></div>
         </div>
-
-        {/* RIGHT IMAGE */}
-        <motion.div
-  initial={{ opacity: 0, y: 40 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.7 }}
-  className="relative w-full"
->
-  <div className="rounded-3xl overflow-hidden shadow-2xl w-full">
-    <Image
-      src="/hero-casa.jpg"
-      alt="Casablanca"
-      width={900}
-      height={700}
-      className="
-        object-cover 
-        w-full 
-        h-[260px]        /* 📱 Hauteur mobile */
-        sm:h-[320px]     /* 📱 Tablet small */
-        md:h-[420px]     /* 💻 Desktop */
-        lg:h-[480px]     /* 💻 Large écrans */
-      "
-    />
-  </div>
-</motion.div>
-
+        <div className="heroVisual" role="img" aria-label="Intérieur lumineux et raffiné à Casablanca">
+          <div className="heroCard"><span>01</span><p>Votre bien<br />entre de bonnes mains.</p></div>
+        </div>
       </section>
 
-      {/* WAVE HERO → VIDEO */}
-      <div className="w-full overflow-hidden -mb-2">
-        <svg viewBox="0 0 1440 100" className="w-full h-16 text-white" fill="currentColor">
-          <path d="M0,64L1440,0L1440,100L0,100Z"></path>
-        </svg>
-      </div>
-
-      {/* VIDEO SECTION */}
-      <motion.section
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-5xl mx-auto px-6 py-16"
-      >
-        <div className="rounded-3xl overflow-hidden shadow-lg">
-          <video src="/qr-intro.mp4" autoPlay muted loop playsInline className="w-full h-auto" />
+      <section id="services" className="services">
+        <div className="sectionIntro">
+          <p className="eyebrow">NOS SERVICES</p>
+          <h2>Tout ce qu’il faut,<br /><em>sans rien laisser au hasard.</em></h2>
+          <p>Pour les propriétaires exigeants comme pour les voyageurs qui attendent plus qu’un simple logement.</p>
         </div>
-
-        <div className="text-center mt-6">
-          <h2 className="text-3xl font-serif font-bold text-[#002f6d]">
-            Une expérience Homixia à portée de main
-          </h2>
-          <p className="mt-3 text-lg text-[#002f6d]/70 max-w-2xl mx-auto">
-            Découvrez votre logement, les services instantanés et les bons plans Homixia grâce à votre QR Code.
-          </p>
+        <div className="serviceGrid">
+          {services.map((service, index) => (
+            <article className="service" key={service.title}>
+              <div className="serviceTop"><span>{service.icon}</span><small>0{index + 1}</small></div>
+              <h3>{service.title}</h3>
+              <p>{service.text}</p>
+              <a href="#contact" aria-label={`En savoir plus sur ${service.title}`}>En savoir plus <b>→</b></a>
+            </article>
+          ))}
         </div>
-      </motion.section>
+      </section>
 
-      {/* WAVE VIDEO → SERVICES */}
-      <div className="w-full overflow-hidden -mt-1">
-        <svg viewBox="0 0 1440 100" className="w-full h-16 text-[var(--bg-soft)]" fill="currentColor">
-          <path d="M0,64L1440,0L1440,100L0,100Z"></path>
-        </svg>
-      </div>
+      <section id="apropos" className="statement">
+        <p className="eyebrow">LA SIGNATURE HOMIXIA</p>
+        <h2>Le détail change <em>tout.</em></h2>
+        <p>De la première réservation au dernier message de départ, nous orchestrons chaque étape avec méthode, réactivité et attention.</p>
+      </section>
 
-      {/* SERVICES */}
-      <motion.section
-        id="services"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="w-full bg-[var(--bg-soft)] py-16"
-      >
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-serif font-bold text-center mb-10">
-            Nos Services Premium
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { title: "QR Code dans l’appartement", text: "Accès immédiat aux guides, règles et services." },
-              { title: "Services instantanés", text: "Baby-sitter, onglerie, chef privé, ménage à la demande." },
-              { title: "Check-in intelligent", text: "Arrivée autonome 24/7 sécurisée & simple." },
-              { title: "Guides & bons plans", text: "Les meilleures adresses sélectionnées pour vos voyageurs." },
-              { title: "Gestion simple & efficace", text: "Annonces, calendrier, ménage, check-in/out." },
-              { title: "Assistance & maintenance", text: "Interventions rapides: plomberie, électricité, nettoyage." },
-              { title: "Annonces optimisées", text: "Photos pro, textes SEO et stratégie tarifaire." },
-            ].map((s, i) => (
-              <motion.article
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="bg-white border rounded-2xl p-6 shadow-sm hover:shadow-lg transition"
-              >
-                <h3 className="text-xl font-semibold">{s.title}</h3>
-                <p className="mt-2 text-sm text-[#123]/80">{s.text}</p>
-
-                <span className="inline-block mt-4 px-3 py-1 rounded-full text-xs font-medium text-[#ff9202] bg-[#fff6ec]">
-                  Service Homixia
-                </span>
-              </motion.article>
-            ))}
-          </div>
+      <section id="contact" className="contact">
+        <div>
+          <p className="eyebrow">UN PROJET ?</p>
+          <h2>Parlons de<br /><em>votre bien.</em></h2>
         </div>
-      </motion.section>
-
-      {/* GRADIENT SERVICES → LOGEMENTS */}
-      <div className="h-16 w-full bg-gradient-to-b from-[var(--bg-soft)] to-white"></div>
-
-      {/* LOGEMENTS */}
-      <motion.section
-        id="logements"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="w-full py-16"
-      >
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-serif font-bold text-center mb-10">
-            Nos Logements
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {apartments.map((apt, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="bg-white border rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition"
-              >
-                <Image src={apt.image} width={800} height={600} className="object-cover h-56 w-full" alt="" />
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold">{apt.title}</h3>
-                  <p className="mt-1 text-sm text-[#123]/80">{apt.location}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+        <div className="contactSide">
+          <p>Vous souhaitez confier un appartement, préparer un séjour ou mettre en place un service sur mesure ? Notre équipe vous répond rapidement.</p>
+          <a className="lightButton" href="https://wa.me/212665247695?text=Bonjour%20Homixia%2C%20je%20souhaite%20parler%20de%20mon%20projet." target="_blank" rel="noreferrer">Démarrer la conversation <span>→</span></a>
+          <a className="email" href="mailto:contact@homixia.app">contact@homixia.app</a>
         </div>
-      </motion.section>
+      </section>
 
-      {/* CONTACT */}
-<motion.section
-  id="contact"
-  initial={{ opacity: 0, y: 40 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  viewport={{ once: true }}
-  transition={{ duration: 0.6 }}
-  className="w-full bg-[var(--accent-dark)] text-white py-20"
->
-  <div className="max-w-4xl mx-auto px-6 text-center">
+      <footer><a className="brand" href="/">HOMIXIA<span>.</span></a><p>© {new Date().getFullYear()} Homixia. Casablanca, Maroc.</p></footer>
 
-    <h2
-  className="text-4xl font-serif font-bold mb-4"
-  style={{
-    color: "#ffffff",
-    opacity: 1,
-    zIndex: 9999,
-    position: "relative",
-    mixBlendMode: "normal",
-    filter: "none",
-    textShadow: "0 0 0 transparent",
-  }}
->
-  Contact & Réservation
-</h2>
-
-
-    <p className="mb-6 text-white">
-      Envie d’optimiser la gestion de votre bien ? Parlons-en.
-    </p>
-
-    <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-      <a
-        href={`https://wa.me/212665247695?text=${whatsappText}`}
-        className="btn-primary"
-      >
-        Nous écrire sur WhatsApp
-      </a>
-
-      <a
-        href="mailto:contact@homixia.example"
-        className="btn-ghost-inverted"
-      >
-        Envoyer un email
-      </a>
-    </div>
-  </div>
-</motion.section>
-
-
-      {/* FOOTER */}
-      <footer className="w-full bg-white py-8">
-        <div className="max-w-7xl mx-auto px-6 text-center text-sm text-[#123]/80">
-          © {new Date().getFullYear()} Homixia — Conciergerie Premium. Tous droits réservés.
-        </div>
-      </footer>
-
-      {/* BOUTON WHATSAPP FLOTTANT */}
-      <a
-        href={`https://wa.me/212665247695?text=${whatsappText}`}
-        className="fixed bottom-6 right-6 z-[200] bg-[#25D366] rounded-full w-16 h-16 flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
-        aria-label="WhatsApp"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="white">
-          <path d="M20.52 3.48A11.86 11.86 0 0012 .1 12 12 0 002.21 18.7L.1 24l5.45-2.07a12 12 0 0017-13.58 11.86 11.86 0 00-2.03-4.87zM12 22a9.93 9.93 0 01-5.09-1.42l-.36-.21-3.23 1.22.86-3.39-.22-.35A10 10 0 1122 12a10 10 0 01-10 10zm5.28-7.29c-.29-.15-1.71-.84-1.98-.94s-.46-.15-.65.15-.75.94-.92 1.13-.34.22-.63.07a8.2 8.2 0 01-2.4-1.48 9 9 0 01-1.66-2.06c-.17-.3 0-.46.13-.61s.3-.34.45-.51a2 2 0 00.3-.51.56.56 0 00-.02-.54c-.07-.15-.65-1.57-.9-2.15s-.48-.5-.66-.51h-.57a1.1 1.1 0 00-.78.36 3.33 3.33 0 00-1 2.47 5.84 5.84 0 001.24 3.08 13.34 13.34 0 005.15 4.63 17.6 17.6 0 001.74.64 4.2 4.2 0 001.93.12 3.16 3.16 0 002.07-1.46 2.57 2.57 0 00.18-1.46c-.08-.14-.26-.23-.55-.38z" />
-        </svg>
-      </a>
-
+      <style jsx global>{`
+        :root { --ink:#15241f; --paper:#f7f5f0; --sage:#dbe3d7; --orange:#dd6c38; }
+        * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; background:var(--paper); color:var(--ink); font-family:Arial, Helvetica, sans-serif; }
+        .nav { height:82px; display:flex; align-items:center; justify-content:space-between; max-width:1280px; padding:0 42px; margin:auto; }
+        .brand { color:var(--ink); font:700 22px/1 Arial, sans-serif; letter-spacing:.14em; text-decoration:none; } .brand span { color:var(--orange); }
+        nav { display:flex; gap:30px; } nav a, .email { color:var(--ink); text-decoration:none; font-size:14px; } nav a:hover,.email:hover { text-decoration:underline; }
+        .navCta,.primary,.lightButton { background:var(--ink); color:#fff; padding:14px 20px; text-decoration:none; font-size:13px; font-weight:700; border-radius:999px; }
+        .hero { min-height:650px; max-width:1280px; margin:auto; padding:58px 42px 78px; display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center; }
+        .eyebrow { color:var(--orange); font-size:11px; font-weight:700; letter-spacing:.19em; margin:0 0 22px; }
+        h1,h2 { margin:0; font-family:Georgia, 'Times New Roman', serif; font-weight:400; letter-spacing:-.055em; } h1 { font-size:clamp(58px,7vw,98px); line-height:.91; } h2 { font-size:clamp(42px,5vw,67px); line-height:.95; }
+        em { color:var(--orange); font-weight:400; } .lead { max-width:470px; margin:28px 0; color:#47534d; font-size:18px; line-height:1.6; }
+        .actions { display:flex; flex-wrap:wrap; align-items:center; gap:20px; } .primary span,.lightButton span { margin-left:15px; font-size:18px; } .secondary { color:var(--ink); font-size:14px; font-weight:700; }
+        .trust { display:flex; flex-wrap:wrap; gap:10px; margin-top:54px; color:#637069; font-size:12px; } .trust strong { color:var(--ink); }
+        .heroVisual { height:540px; position:relative; border-radius:2px; background:linear-gradient(0deg,rgba(12,28,20,.25),rgba(12,28,20,.02)),url('https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=85') center/cover; }
+        .heroCard { position:absolute; left:-36px; bottom:34px; width:220px; padding:24px; background:#e6e8df; color:var(--ink); } .heroCard span { color:var(--orange); font-size:12px; font-weight:700; } .heroCard p { margin:30px 0 0; font:24px/1.05 Georgia,serif; }
+        .services { background:var(--sage); padding:112px max(42px,calc((100vw - 1196px)/2)); display:grid; grid-template-columns:.8fr 1.2fr; gap:76px; } .sectionIntro>p:last-child { color:#4d5b53; max-width:340px; line-height:1.65; margin-top:30px; }
+        .serviceGrid { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid #acb7aa; } .service { min-height:256px; padding:28px 25px; border-bottom:1px solid #acb7aa; border-left:1px solid #acb7aa; position:relative; } .service:nth-child(odd){ border-left:0; }
+        .serviceTop { display:flex; justify-content:space-between; color:var(--orange); font-size:17px; } .serviceTop small { color:#718079; font-size:11px; } .service h3 { margin:52px 0 10px; font:26px Georgia,serif; } .service p { color:#4d5b53; line-height:1.5; font-size:14px; max-width:255px; } .service a { display:inline-block; margin-top:12px; color:var(--ink); text-decoration:none; font-size:13px; font-weight:700; } .service b{ margin-left:8px; color:var(--orange); }
+        .statement { padding:135px 42px; max-width:900px; margin:auto; text-align:center; } .statement p:last-child { margin:28px auto 0; max-width:550px; color:#59645f; line-height:1.7; }
+        .contact { background:var(--orange); color:#fff; padding:100px max(42px,calc((100vw - 1196px)/2)); display:grid; grid-template-columns:1fr 1fr; gap:70px; } .contact .eyebrow { color:#fff0e6; } .contact em { color:var(--ink); } .contactSide { padding-top:26px; } .contactSide p { line-height:1.7; max-width:410px; } .lightButton { display:inline-block; margin:26px 0; background:#fff; color:var(--ink); } .email { display:block; color:#fff; font-weight:700; }
+        footer { max-width:1280px; margin:auto; padding:30px 42px; display:flex; justify-content:space-between; align-items:center; } footer p { color:#6c746f; font-size:12px; }
+        @media (max-width:760px) { .nav{height:70px;padding:0 21px;} nav{display:none}.navCta{display:none}.hero{min-height:0;padding:55px 22px 72px;grid-template-columns:1fr;gap:42px}.heroVisual{height:380px}.heroCard{left:0;bottom:-22px;width:200px}.lead{font-size:16px}.services{padding:76px 22px;grid-template-columns:1fr;gap:42px}.serviceGrid{grid-template-columns:1fr}.service{border-left:0}.statement{padding:96px 22px}.contact{padding:76px 22px;grid-template-columns:1fr;gap:20px}.contactSide{padding-top:0}footer{padding:26px 22px;display:block}footer p{margin-top:20px} }
+      `}</style>
     </main>
   );
 }
